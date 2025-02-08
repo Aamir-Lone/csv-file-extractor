@@ -1,6 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import auth, upload, status, results
+from app.db.database import init_db
+import asyncio
+
+app = FastAPI()
+
+@app.on_event("startup")
+async def startup_event():
+    await init_db()
+
 
 # Create FastAPI instance
 app = FastAPI(title="Web Scraper API", version="1.0")
