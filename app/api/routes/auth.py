@@ -10,6 +10,23 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 import os
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel, EmailStr
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text  # Import text() for raw SQL queries
+from app.db.database import get_db
+# from app.db.user_model import User
+from app.db.models import User
+from passlib.context import CryptContext
+from datetime import datetime, timedelta
+from jose import JWTError, jwt
+import os
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.db.database import get_db
+from app.workers.tasks import scrape_metadata  # Import scrape_metadata task
+
 
 router = APIRouter()
 
@@ -121,18 +138,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
 @router.get("/protected")
 async def protected_route(user: User = Depends(get_current_user)):
     return {"message": f"Hello, {user.username}. You are authenticated!"}
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel, EmailStr
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import text  # Import text() for raw SQL queries
-from app.db.database import get_db
-# from app.db.user_model import User
-from app.db.models import User
-from passlib.context import CryptContext
-from datetime import datetime, timedelta
-from jose import JWTError, jwt
-import os
+
 
 router = APIRouter()
 
@@ -357,3 +363,19 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
 @router.get("/protected")
 async def protected_route(user: User = Depends(get_current_user)):
     return {"message": f"Hello, {user.username}. You are authenticated!"}
+
+
+# The endpoint for uploading CSV and starting the scraping task
+@router.post("/upload")
+async def upload_csv(file: UploadFile, db: AsyncSession = Depends(get_db)):
+    # Parse the CSV file (for simplicity, assuming each line in the CSV is a URL)
+    csv_data = await file.read()
+    decoded_data = csv_data.decode("utf-8").splitlines()
+
+    for row in decoded_data:
+        url = row.strip()  # Remove any extra spaces/newlines around the URL
+        # Trigger Celery task to scrape the metadata for each URL
+        scrape_metadata.apply_async(args=[url, db])  # Enqueue the task in Celery
+
+    return {"message": "CSV uploaded and scraping started!"}
+

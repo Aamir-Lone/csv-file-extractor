@@ -58,6 +58,10 @@ async def get_db():
     """Dependency for FastAPI routes to get a database session."""
     async with SessionLocal() as session:
         yield session
+# # Dependency to get DB session
+# async def get_db():
+#     async with AsyncSessionLocal() as session:
+#         yield session
 
 # No more `Base.metadata.create_all()`
 async def init_db():
