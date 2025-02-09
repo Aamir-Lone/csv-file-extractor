@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import auth, upload, status, results
 from app.db.database import init_db
 import asyncio
+from app.api.routes import upload
 
 app = FastAPI()
 
@@ -28,6 +29,9 @@ app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(upload.router, prefix="/upload", tags=["Upload"])
 app.include_router(status.router, prefix="/status", tags=["Scraping Status"])
 app.include_router(results.router, prefix="/results", tags=["Results"])
+
+app.include_router(upload.router, prefix="/csv")
+
 
 # Root endpoint
 @app.get("/")

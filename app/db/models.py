@@ -27,6 +27,9 @@
 # ***************************************************
 from sqlalchemy import Column, Integer, String
 from app.db.database import Base
+from sqlalchemy import Column, Integer, String, DateTime
+from datetime import datetime
+from app.db.database import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -35,3 +38,11 @@ class User(Base):
     username = Column(String, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+
+class URLRecord(Base):
+    __tablename__ = "url_records"
+
+    id = Column(Integer, primary_key=True, index=True)
+    url = Column(String, unique=True, index=True)
+    status = Column(String, default="pending")  # pending, in-progress, completed, failed
+    created_at = Column(DateTime, default=datetime.utcnow)

@@ -34,9 +34,11 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+import os
+
 
 # DATABASE_URL = "postgresql+asyncpg://postgres:Aamirlone@localhost:5432/web_scraper"
-DATABASE_URL= s.getenv("DATABASE_URL")
+DATABASE_URL= os.getenv("DATABASE_URL")
 
 # Create an engine
 engine = create_engine(DATABASE_URL, echo=True)
