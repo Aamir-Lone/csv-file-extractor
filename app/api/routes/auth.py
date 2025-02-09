@@ -61,9 +61,9 @@ def create_access_token(data: dict, expires_delta: timedelta):
 #     result = await db.execute(query, {"email": user.email})
 #     user_exists = result.fetchone()
 @router.post("/register")
-async def register_user(user: UserCreate, db: AsyncSession = Depends(get_db)):  # ✅ Use AsyncSession
+async def register_user(user: UserCreate, db: AsyncSession = Depends(get_db)): 
     query = select(User).where(User.email == user.email)
-    result = await db.execute(query)  # ✅ Now fully async
+    result = await db.execute(query)  
     user_exists = result.fetchone()
     
     if user_exists:
@@ -73,8 +73,8 @@ async def register_user(user: UserCreate, db: AsyncSession = Depends(get_db)):  
     new_user = User(username=user.username, email=user.email, hashed_password=hashed_password)
 
     db.add(new_user)
-    await db.commit()  # Use async commit for AsyncSession
-    await db.refresh(new_user)  # Use async refresh for AsyncSession
+    await db.commit()  # Commit the changes
+    await db.refresh(new_user)  # Refresh the object with updated data
 
     return {"message": "User registered successfully"}
 

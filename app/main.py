@@ -5,7 +5,8 @@ from app.db.database import init_db
 import asyncio
 from app.api.routes import upload
 
-app = FastAPI()
+# app = FastAPI()
+app = FastAPI(title="Web Scraper API", version="1.0")
 
 @app.on_event("startup")
 async def startup_event():
@@ -13,7 +14,7 @@ async def startup_event():
 
 
 # Create FastAPI instance
-app = FastAPI(title="Web Scraper API", version="1.0")
+
 
 # CORS Middleware (Allow frontend access)
 app.add_middleware(
@@ -30,7 +31,7 @@ app.include_router(upload.router, prefix="/upload", tags=["Upload"])
 app.include_router(status.router, prefix="/status", tags=["Scraping Status"])
 app.include_router(results.router, prefix="/results", tags=["Results"])
 
-app.include_router(upload.router, prefix="/csv")
+app.include_router(upload.router, prefix="/csv", tags=["CSV"])
 
 
 # Root endpoint

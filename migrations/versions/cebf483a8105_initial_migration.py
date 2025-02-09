@@ -1,8 +1,8 @@
-"""Fix duplicate User model
+"""Initial migration
 
-Revision ID: fde717364370
-Revises: 7eaddcb8e1b5
-Create Date: 2025-02-08 11:33:10.660771
+Revision ID: cebf483a8105
+Revises: 962cc0055855
+Create Date: 2025-02-10 00:28:27.006644
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'fde717364370'
-down_revision: Union[str, None] = '7eaddcb8e1b5'
+revision: str = 'cebf483a8105'
+down_revision: Union[str, None] = '962cc0055855'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

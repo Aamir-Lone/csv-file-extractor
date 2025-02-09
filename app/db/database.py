@@ -31,43 +31,35 @@
 # **********************************************************************************
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
 import os
+from dotenv import load_dotenv
 
+# Load environment variables
+load_dotenv()
 
-# DATABASE_URL = "postgresql+asyncpg://postgres:Aamirlone@localhost:5432/web_scraper"
-DATABASE_URL= os.getenv("DATABASE_URL")
+# Get database URL from .env
+DATABASE_URL = os.getenv("DATABASE_URL")  
 
-# Create an engine
-engine = create_engine(DATABASE_URL, echo=True)
+# Ensure DATABASE_URL is set
+if not DATABASE_URL:
+    raise ValueError("⚠️ DATABASE_URL is not set. Please check your .env file.")
 
-# Define the base class for models
+# Create Async SQLAlchemy engine
+engine = create_async_engine(DATABASE_URL, echo=True)  
+
+# Create async session factory
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
+
+# Base class for models
 Base = declarative_base()
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
 
-DATABASE_URL = "postgresql+asyncpg://postgres:Aamirlone@localhost:5432/web_scraper"
-
-engine = create_async_engine(DATABASE_URL, echo=True)
-AsyncSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
-
-Base = declarative_base()
-
-def init_db():
-    """Initializes the database by creating all tables."""
-    from app.db.models import Base  # Import inside function to avoid circular imports
-    Base.metadata.create_all(bind=engine)
-
-
-# Create a session factory
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# Dependency for getting the database session
+# Function to get a database session
 async def get_db():
-    async with AsyncSessionLocal() as session:
+    """Dependency for FastAPI routes to get a database session."""
+    async with SessionLocal() as session:
         yield session
-# Import models at the end to avoid circular imports
-from app.db import models  # Import all models so Alembic detects them
+
+# No more `Base.metadata.create_all()`
+async def init_db():
+    """Database initialization - Now handled via Alembic migrations."""
+    pass
