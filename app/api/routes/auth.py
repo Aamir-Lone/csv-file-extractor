@@ -4,29 +4,14 @@ from pydantic import BaseModel, EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text  # Import text() for raw SQL queries
 from app.db.database import get_db
-# from app.db.user_model import User
-from app.db.models import User
-from passlib.context import CryptContext
-from datetime import datetime, timedelta
-from jose import JWTError, jwt
-import os
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel, EmailStr
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import text  # Import text() for raw SQL queries
-from app.db.database import get_db
-# from app.db.user_model import User
 from app.db.models import User
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 import os
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
-from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.database import get_db
 from app.workers.tasks import scrape_metadata  # Import scrape_metadata task
-
 
 router = APIRouter()
 
