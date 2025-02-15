@@ -42,3 +42,13 @@ def scrape_metadata(url, db_session):
     
     except Exception as e:
         return {"status": "failed", "error": str(e)}
+@celery.task
+def add(x, y):
+    return x + y
+
+
+
+
+
+
+

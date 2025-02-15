@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+redis
+celery
+requests
+beautifulsoup4
+sqlalchemy
+psycopg2
